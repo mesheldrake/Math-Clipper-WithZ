@@ -23,6 +23,7 @@ our %EXPORT_TAGS = (
     #polytypes     => [qw/PT_SUBJECT PT_CLIP/],
     polyfilltypes => [qw/PFT_EVENODD PFT_NONZERO PFT_POSITIVE PFT_NEGATIVE/],
     jointypes     => [qw/JT_MITER JT_ROUND JT_SQUARE/],
+    endtypes     => [qw/ET_SQUARE ET_ROUND ET_BUTT ET_CLOSED/],
     utilities       => [qw/area offset is_counter_clockwise orientation integerize_coordinate_sets unscale_coordinate_sets
                     simplify_polygon simplify_polygons int_offset ex_int_offset ex_int_offset2/],
 );

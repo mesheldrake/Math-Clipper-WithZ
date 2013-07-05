@@ -2,6 +2,7 @@ Clipper*		O_OBJECT
 
 PolyType		T_UV
 ClipType		T_UV
+EndType		T_UV
 PolyFillType		T_UV
 JoinType		T_UV
 

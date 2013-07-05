@@ -24,6 +24,10 @@ _constant()
     JT_MITER = jtMiter
     JT_ROUND = jtRound
     JT_SQUARE = jtSquare
+    ET_CLOSED = etClosed
+    ET_BUTT = etButt
+    ET_SQUARE = etSquare
+    ET_ROUND = etRound
   CODE:
     RETVAL = ix;
   OUTPUT: RETVAL
@@ -37,26 +41,32 @@ class Clipper {
 
 %{
 ClipperLib::Polygons*
-execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd)
+execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd, withZFill = 1)
     Clipper* THIS
     ClipType clipType
     PolyFillType subjFillType
     PolyFillType clipFillType
+    unsigned int withZFill
   CODE:
     RETVAL = new ClipperLib::Polygons();
+    THIS->ZFillFunction(&zfill_both_uint32s);
     THIS->Execute(clipType, *RETVAL, subjFillType, clipFillType);
+    zfill_both_uint32s_fix_pairs_polygons(*RETVAL, clipType);
   OUTPUT:
     RETVAL
 
 ExPolygons*
-ex_execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd)
+ex_execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd, withZFill = 1)
     Clipper* THIS
     ClipType clipType
     PolyFillType subjFillType
     PolyFillType clipFillType
+    unsigned int withZFill
   CODE:
     PolyTree* polytree = new ClipperLib::PolyTree();
+    THIS->ZFillFunction(&zfill_both_uint32s);
     THIS->Execute(clipType, *polytree, subjFillType, clipFillType);
+    zfill_both_uint32s_fix_pairs_polytree(*polytree, clipType);
     RETVAL = new ExPolygons();
     PolyTreeToExPolygons(*polytree, *RETVAL);
     delete polytree;
@@ -64,16 +74,20 @@ ex_execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd)
     RETVAL
 
 ClipperLib::PolyTree*
-pt_execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd)
+pt_execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd, withZFill = 1)
     Clipper* THIS
     ClipType clipType
     PolyFillType subjFillType
     PolyFillType clipFillType
+    unsigned int withZFill
   CODE:
     RETVAL = new ClipperLib::PolyTree();
+    THIS->ZFillFunction(&zfill_both_uint32s);
     THIS->Execute(clipType, *RETVAL, subjFillType, clipFillType);
+    zfill_both_uint32s_fix_pairs_polytree(*RETVAL, clipType);
   OUTPUT:
     RETVAL
+
 %}
 
 // No longer in v4.X
@@ -255,6 +269,20 @@ ex_int_offset2(polygons, delta1, delta2, scale, jointype, MiterLimit)
     delete offset1;
     delete offset2;
     delete polytree;
+  OUTPUT:
+    RETVAL
+
+ClipperLib::Polygons*
+polylines_offset(polylines, delta, jointype, endtype, limit)
+    ClipperLib::Polygons* polylines
+    const float delta
+    JoinType jointype
+    EndType endtype
+    const double limit
+  CODE:
+    RETVAL = new ClipperLib::Polygons();
+    ClipperLib::OffsetPolyLines(*polylines, *RETVAL, delta, jointype, endtype, limit);
+    delete polylines;
   OUTPUT:
     RETVAL
 
