@@ -3,7 +3,7 @@ use strict;
 use Module::Build::WithXSpp;
 
 my $build = Module::Build::WithXSpp->new(
-  module_name     => 'Math::Clipper',
+  module_name     => 'Math::Clipper::WithZ',
   license         => 'perl',
   configure_requires  => {
       'Module::Build'  => '0.38',

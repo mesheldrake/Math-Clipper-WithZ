@@ -1,4 +1,4 @@
-package Math::Clipper;
+package Math::Clipper::WithZ;
 
 use 5.008;
 use strict;
@@ -13,7 +13,7 @@ our @ISA = qw(Exporter);
 BEGIN {
     use XSLoader;
     $VERSION = '1.22';
-    XSLoader::load('Math::Clipper', $VERSION);
+    XSLoader::load('Math::Clipper::WithZ', $VERSION);
 }
 
 # TODO: keep in sync with docs below and xsp/Clipper.xsp

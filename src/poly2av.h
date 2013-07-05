@@ -25,7 +25,7 @@ polygon2perl(pTHX_ const ClipperLib::Polygon& poly)
     av_store(innerav, 0, newSViv(poly[i].X));
     av_store(innerav, 1, newSViv(poly[i].Y));//std::cout << "here with Z [" << poly[i].Z << "]";
 #ifdef use_xyz
-    av_store(innerav, 2, newSVuv(poly[i].Z));
+    av_store(innerav, 2, newSViv(poly[i].Z));
 #endif
 #else
     // otherwise we expect Clipper integers to fit in the
@@ -143,9 +143,7 @@ perl2polygon(pTHX_ AV* theAv)
     p.Y = (ClipperLib::long64)SvIV(*av_fetch(innerav, 1, 0));
 #ifdef use_xyz
     if (av_len(innerav) > 1) {
-       p.Z = (ClipperLib::cUInt) SvUV(*av_fetch(innerav, 2, 0));
-       if (p.X == 11843257 && p.Y == 12330480) {std::cout << "watched x pt goes in: " << p.X << ", " << p.Y << ", " << p.Z << "\n";}
-       //if (0xFFFFFFFF < p.Z) { std::cout << "in here with big z 1:" << p.Z << " or " << ((ClipperLib::cUInt) SvUV(*av_fetch(innerav, 2, 0))) << "\n"; }
+       p.Z = (ClipperLib::cInt) SvIV(*av_fetch(innerav, 2, 0));
     } // else p.Z defaults to zero
 #endif
 #else
@@ -156,7 +154,7 @@ perl2polygon(pTHX_ AV* theAv)
     p.Y = (ClipperLib::long64)SvNV(*av_fetch(innerav, 1, 0));
 #ifdef use_xyz
     if (av_len(innerav) > 1) {
-       p.Z = (ClipperLib::long64)SvNV(*av_fetch(innerav, 2, 0));
+       p.Z = (ClipperLib::cInt)SvNV(*av_fetch(innerav, 2, 0));
     } // else p.Z defaults to zero
 #endif
 #endif
