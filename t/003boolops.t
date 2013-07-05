@@ -1,4 +1,4 @@
-use Math::Clipper ':all';
+use Math::Clipper::WithZ ':all';
 use Test::More tests=>7;
 
 #my $ai = [
@@ -25,7 +25,7 @@ my $bi = [
 
 my $triarea=100;
 
-my $clipper = Math::Clipper->new;
+my $clipper = Math::Clipper::WithZ->new;
 $clipper->use_full_coordinate_range(1);
 $clipper->add_subject_polygon($ai);
 $clipper->add_clip_polygon($bi);
@@ -80,6 +80,6 @@ ok(
 sub area_sum {
     my $polys=shift;
     my $ret = 0;
-    map {$ret+=Math::Clipper::area($_)} @{$polys};
+    map {$ret+=Math::Clipper::WithZ::area($_)} @{$polys};
     return $ret;
     }

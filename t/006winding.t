@@ -1,4 +1,4 @@
-use Math::Clipper ':all';
+use Math::Clipper::WithZ ':all';
 use Test::More tests => 4;
 
 my $ccw = [

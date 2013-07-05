@@ -8,7 +8,7 @@ sub approx_eq {
   return ($_[0]+EPS() < $_[1] && $_[0]-EPS() > $_[1]);
 }
 
-use Math::Clipper qw/:all/;
+use Math::Clipper::WithZ qw/:all/;
 pass();
 
 
@@ -22,8 +22,8 @@ foreach my $const (
 }
 
 SCOPE: {
-  my $c = Math::Clipper->new;
-  isa_ok($c, 'Math::Clipper');
+  my $c = Math::Clipper::WithZ->new;
+  isa_ok($c, 'Math::Clipper::WithZ');
   $c->add_subject_polygon(
     [
       [0, 0],
@@ -48,8 +48,8 @@ SCOPE: {
 }
 
 SCOPE: {
-  my $c = Math::Clipper->new;
-  isa_ok($c, 'Math::Clipper');
+  my $c = Math::Clipper::WithZ->new;
+  isa_ok($c, 'Math::Clipper::WithZ');
   $c->add_subject_polygon(
     [
       [0, 0],

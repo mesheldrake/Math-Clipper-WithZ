@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Math::Clipper ':all';
+use Math::Clipper::WithZ ':all';
 use Test::More tests => 1;
 
 # The following polygon with a -10000000000 offset
@@ -25,9 +25,9 @@ my $p1 = [
     [884673700000 , 7451240000000]
 ];
 
-my $winding_before = Math::Clipper::orientation($p1);
-my $offsets = Math::Clipper::offset([$p1], -10000000000, 1);
-my $winding_after = Math::Clipper::orientation($offsets->[0]);
+my $winding_before = Math::Clipper::WithZ::orientation($p1);
+my $offsets = Math::Clipper::WithZ::offset([$p1], -10000000000, 1);
+my $winding_after = Math::Clipper::WithZ::orientation($offsets->[0]);
 
 ok($winding_before eq $winding_after, "http://sourceforge.net/p/polyclipping/bugs/47/");
 

@@ -3,7 +3,7 @@ use warnings;
 use File::Spec;
 
 use Test::More tests => 1;
-use Math::Clipper;
+use Math::Clipper::WithZ;
 pass();
 
 

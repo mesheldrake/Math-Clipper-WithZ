@@ -1,4 +1,4 @@
-use Math::Clipper ':all';
+use Math::Clipper::WithZ ':all';
 use Test::More tests => 9;
 
 {
@@ -21,7 +21,7 @@ use Test::More tests => 9;
         [4,6],
     ];
     
-    my $clipper = Math::Clipper->new;
+    my $clipper = Math::Clipper::WithZ->new;
     $clipper->add_subject_polygons([ $square1, $hole1, $square2 ]);
     my $polytree = $clipper->pt_execute(CT_UNION);
     is scalar(@$polytree), 1, 'only one top-level polygon';
@@ -47,7 +47,7 @@ use Test::More tests => 9;
         [30,30],
         [20,30],
     ];
-    my $clipper = Math::Clipper->new;
+    my $clipper = Math::Clipper::WithZ->new;
     $clipper->add_subject_polygons([ $square1, $square2 ]);
     my $polytree = $clipper->pt_execute(CT_INTERSECTION);
     is scalar(@$polytree), 0, 'null intersection returned empty arrayref';

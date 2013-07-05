@@ -1,4 +1,4 @@
-use Math::Clipper ':all';
+use Math::Clipper::WithZ ':all';
 use Test::More tests=>4;
 
 my $ai = [ #area = 16
@@ -21,7 +21,7 @@ my $bir = [#area = 4 (negative if PFT_NONZERO), is inside $ai
 ];
 
 
-my $clipper = Math::Clipper->new;
+my $clipper = Math::Clipper::WithZ->new;
 $clipper->use_full_coordinate_range(1);
 $clipper->add_subject_polygon($ai);
 $clipper->add_subject_polygon($bi);
