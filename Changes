@@ -1,4 +1,12 @@
-Revision history for Perl extension Math::Clipper.
+Revision history for Perl extension Math::Clipper::WithZ.
+
+1.22  Friday July 05 21:00:00 2013
+
+  - Math::Clipper::WithZ forked from Math::Clipper
+  - Early support for Clipper 6.0.0 alpha's Z values in IntPoints
+  - Ideally this fork will develop from a full copy of Math-Clipper
+    to just a minimal XS module that simply adds the Z feature as
+    an run-time option to Math-Clipper.
 
 1.22  Sun May 19 17:14:00 2013
 
