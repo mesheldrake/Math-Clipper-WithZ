@@ -1,0 +1,12 @@
+This should be a temporary fork of Math-Clipper with early support for points
+with Z values. This is a new compile-time option introduced in 
+Clipper 6.0.0 alpha.
+
+Ideally Math::Clipper::WithZ should be a minimal XS module that just supplements
+Math::Clipper, and not a complete copy. The goal is to develop it in that
+direction.
+
+Until that's accomplished (and after), the WithZ fork should work the same as 
+Math::Clipper, just with the extra Z feature, and initially a different version
+of Clipper under the hood.
+
