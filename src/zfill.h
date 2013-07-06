@@ -3,6 +3,9 @@
 
 #define ZMARK -1;
 #include <iostream>
+
+enum ZFillType { zftNone, zftMax, zftMin, zftMean, zftBothUInt32 };
+
 void zfill_mark(long64 z1, long64 z2, IntPoint& pt) {
   pt.Z = ZMARK;
 }
@@ -60,7 +63,7 @@ void zfill_fix_pair_order(IntPoint prevpt, IntPoint thispt, IntPoint nextpt,
 
   if ( 
       //false && 
-      thispt.Z > 0xFFFFFFFF) {std::cout << "in fillz\nn";
+      thispt.Z > 0xFFFFFFFF) {
     if (  (   (   (thispt.Y > prevpt.Y || (thispt.Y == prevpt.Y && thispt.X > prevpt.X)) 
                && (thispt.Y > nextpt.Y || (thispt.Y == nextpt.Y && thispt.X > nextpt.X))
               )
@@ -141,6 +144,30 @@ void zfill_both_float32s(long64 z1, long64 z2, IntPoint& pt) {
   // back to signed interger, because that's what Clipper expects
   pt.Z = (long64) lo + hi;
 
+}
+
+
+void zfill_postprocess(ClipperLib::Polygons& p, ClipType clipType, ZFillType zft) {
+    if (zft == zftBothUInt32) {
+        zfill_both_uint32s_fix_pairs_polygons(p, clipType);
+    }
+}
+
+void zfill_postprocess_pt(ClipperLib::PolyTree& p, ClipType clipType, ZFillType zft) {
+    if (zft == zftBothUInt32) {
+        zfill_both_uint32s_fix_pairs_polytree(p, clipType);
+    }
+}
+
+void set_zfill_callback(Clipper& THIS, ZFillType zft) {
+    switch (zft) {
+        case zftNone : THIS.ZFillFunction(0); break;
+        case zftMax  : THIS.ZFillFunction(&zfill_greater); break;
+        case zftMin  : THIS.ZFillFunction(&zfill_lesser);break;
+        case zftMean : THIS.ZFillFunction(&zfill_mean); break;
+        case zftBothUInt32 : THIS.ZFillFunction(&zfill_both_uint32s); break;
+        default      : THIS.ZFillFunction(0);
+    }
 }
 
 #endif

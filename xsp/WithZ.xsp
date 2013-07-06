@@ -29,6 +29,11 @@ _constant()
     ET_BUTT = etButt
     ET_SQUARE = etSquare
     ET_ROUND = etRound
+    ZFT_NONE = zftNone
+    ZFT_MAX = zftMax
+    ZFT_MIN = zftMin
+    ZFT_MEAN = zftMean
+    ZFT_BOTH_UINT32 = zftBothUInt32
   CODE:
     RETVAL = ix;
   OUTPUT: RETVAL
@@ -42,33 +47,32 @@ class Clipper {
 
 %{
 ClipperLib::Polygons*
-execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd, withZFill = 0)
+execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd, zfill = zftNone)
     Clipper* THIS
     ClipType clipType
     PolyFillType subjFillType
     PolyFillType clipFillType
-    unsigned int withZFill
+    ZFillType zfill
   CODE:
     RETVAL = new ClipperLib::Polygons();
-    if (withZFill) {THIS->ZFillFunction(&zfill_both_uint32s);std::cout << "WITH Z FILL a\n";}
-    THIS->ZFillFunction(NULL);
+    set_zfill_callback(*THIS, zfill);
     THIS->Execute(clipType, *RETVAL, subjFillType, clipFillType);
-    if (withZFill) {zfill_both_uint32s_fix_pairs_polygons(*RETVAL, clipType);std::cout << "WITH Z FILL b\n";}
+    zfill_postprocess(*RETVAL, clipType, zfill);
   OUTPUT:
     RETVAL
 
 ExPolygons*
-ex_execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd, withZFill = 0)
+ex_execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd, zfill = zftNone)
     Clipper* THIS
     ClipType clipType
     PolyFillType subjFillType
     PolyFillType clipFillType
-    unsigned int withZFill
+    ZFillType zfill
   CODE:
     PolyTree* polytree = new ClipperLib::PolyTree();
-    if (withZFill) {THIS->ZFillFunction(&zfill_both_uint32s);}
+    set_zfill_callback(*THIS, zfill);
     THIS->Execute(clipType, *polytree, subjFillType, clipFillType);
-    if (withZFill) {zfill_both_uint32s_fix_pairs_polytree(*polytree, clipType);}
+    zfill_postprocess_pt(*polytree, clipType, zfill);
     RETVAL = new ExPolygons();
     PolyTreeToExPolygons(*polytree, *RETVAL);
     delete polytree;
@@ -76,17 +80,17 @@ ex_execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd,
     RETVAL
 
 ClipperLib::PolyTree*
-pt_execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd, withZFill = 0)
+pt_execute(THIS, clipType, subjFillType = pftEvenOdd, clipFillType = pftEvenOdd, zfill = zftNone)
     Clipper* THIS
     ClipType clipType
     PolyFillType subjFillType
     PolyFillType clipFillType
-    unsigned int withZFill
+    ZFillType zfill
   CODE:
     RETVAL = new ClipperLib::PolyTree();
-    if (withZFill) {THIS->ZFillFunction(&zfill_both_uint32s);}
+    set_zfill_callback(*THIS, zfill);
     THIS->Execute(clipType, *RETVAL, subjFillType, clipFillType);
-    if (withZFill) {zfill_both_uint32s_fix_pairs_polytree(*RETVAL, clipType);}
+    zfill_postprocess_pt(*RETVAL, clipType, zfill);
   OUTPUT:
     RETVAL
 
