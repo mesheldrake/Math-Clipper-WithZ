@@ -57,27 +57,46 @@ void zfill_both_uint32s(long64 z1, long64 z2, IntPoint& pt) {
 // correspond to edge order in the input and result by swaping the hi and low
 // values in these two cases:
 // (clip type is NOT intersection or difference) xor (point.Y IS a local extreme)
-void zfill_fix_pair_order(IntPoint prevpt, IntPoint thispt, IntPoint nextpt,
+void zfill_fix_pair_order(IntPoint& prevpt, IntPoint& thispt, IntPoint& nextpt,
   ClipperLib::ClipType ct
   ) {
 
-  if ( 
-      //false && 
-      thispt.Z > 0xFFFFFFFF) {
-    if (  (   (   (thispt.Y > prevpt.Y || (thispt.Y == prevpt.Y && thispt.X > prevpt.X)) 
-               && (thispt.Y > nextpt.Y || (thispt.Y == nextpt.Y && thispt.X > nextpt.X))
-              )
-           || (   (thispt.Y < prevpt.Y || (thispt.Y == prevpt.Y && thispt.X < prevpt.X)) 
-               && (thispt.Y < nextpt.Y || (thispt.Y == nextpt.Y && thispt.X < nextpt.X))
-              ) 
-          )
-          != // xor
-          (ct == ctIntersection || ct == ctDifference)
-       ) {
-      thispt.Z = ((thispt.Z & 0xFFFFFFFF) << 32) + (thispt.Z >> 32);
-    }
+  // precondition: thispt.Z > 0xFFFFFFFF
+  if (true) {
+  if ((
+       // these four cover union, intersection and difference
+       ((thispt.Y > prevpt.Y || (thispt.Y == prevpt.Y && thispt.X > prevpt.X)) 
+        && (thispt.Y > nextpt.Y ) // || (thispt.Y == nextpt.Y && thispt.X > nextpt.X))
+       )
+       ||
+       ((thispt.Y > prevpt.Y)
+        && (thispt.Y > nextpt.Y || (thispt.Y == nextpt.Y && thispt.X > nextpt.X))
+        && ct != ctXor
+       )
+       || 
+       ((thispt.Y < prevpt.Y || (thispt.Y == prevpt.Y && thispt.X < prevpt.X)) 
+        && (thispt.Y < nextpt.Y ) // || (thispt.Y == nextpt.Y && thispt.X < nextpt.X))
+        )
+       || 
+       ((thispt.Y < prevpt.Y) 
+        && (thispt.Y < nextpt.Y || (thispt.Y == nextpt.Y && thispt.X < nextpt.X)
+        && ct != ctXor)
+        )
+       // XOR (for polygons, not referring to the one below) _might_ be similar 
+       // but with X playing the staring role.
+       // Or it might be more complicated because it's like an intersection and
+       // a difference in one operation. 
+       // or
+       // Might be able to do it by making the sequence of intersections 
+       // consistent, sometimes disambiguating by checking neighbor points -  
+       // but that wouldn't happen right in here.
+       )
+       != // xor
+       (ct == ctIntersection || ct == ctDifference)
+     ) {    
+    thispt.Z = ((thispt.Z & 0xFFFFFFFF) << 32) + (thispt.Z >> 32);    
   }
-
+  }
 }
 
 void zfill_both_uint32s_fix_pairs_polygon(ClipperLib::Polygon& poly,
@@ -86,15 +105,18 @@ void zfill_both_uint32s_fix_pairs_polygon(ClipperLib::Polygon& poly,
   unsigned int len = poly.size();
 
   if (len > 2) {
-
-    zfill_fix_pair_order(poly[len - 2], poly[len - 1], poly[0], ct);
-    zfill_fix_pair_order(poly[len - 1], poly[0], poly[1], ct);
-
+    if (poly[len - 1].Z > 0xFFFFFFFF) {
+      zfill_fix_pair_order(poly[len - 2], poly[len - 1], poly[0], ct);
+    }
+    if (poly[0].Z > 0xFFFFFFFF) {
+      zfill_fix_pair_order(poly[len - 1], poly[0], poly[1], ct);
+    }
     for (unsigned int j = 1; j < len - 1; j++) {
-      zfill_fix_pair_order(poly[j - 1], poly[j], poly[j + 1], ct);
+      if (poly[j].Z > 0xFFFFFFFF) {
+        zfill_fix_pair_order((poly[j - 1]), (poly[j]), (poly[j + 1]), ct);
+      }
     }
   }
-
 }
 
 void zfill_both_uint32s_fix_pairs_polygons(ClipperLib::Polygons& polys,
