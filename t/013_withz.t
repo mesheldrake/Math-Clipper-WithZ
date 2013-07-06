@@ -5,17 +5,12 @@ use Math::Clipper::WithZ ':all';
 use Test::More tests => 1;
 
 my $p1 = [
-    [20, -10, 0],
-    [50, 0, 12],
-    [20, 10, 0],
-    [-10, 0, -12],
-];
 
-my $p2 = [
-    [-20, -10, 0],
-    [10, 0, 12],
-    [-20, 10, 0],
-    [-50, 0, -12],
+    [ 20, -10,    1], # Clipper treats Z as a signed 64 bit int
+    [ 50,   0,   -2], # signed
+    [ 20,  10,   0xFFFFFFFF], # max unsigned 32 bit int
+    [-10,   0,   0],
+
 ];
 
 my $clipper = Math::Clipper::WithZ->new;
