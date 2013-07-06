@@ -48,26 +48,26 @@ my $clipper = Math::Clipper::WithZ->new;
 $clipper->add_subject_polygon($p1);
 $clipper->add_clip_polygon($p2);
 
-diag("1 in:\n".pfmt($p1)."\nin:\n".pfmt($p2)."\n\n");
+#diag("1 in:\n".pfmt($p1)."\nin:\n".pfmt($p2)."\n\n");
 
 my $result = $clipper->execute(CT_UNION,PFT_NONZERO,PFT_NONZERO,ZFT_NONE);
-diag("out:\n".join("\nout:\n",map pfmt($_), @$result)."\n");
+#diag("out:\n".join("\nout:\n",map pfmt($_), @$result)."\n");
 is_deeply($result->[0], $expect_none, 'zfill set intersections to zero');
 
 $result = $clipper->execute(CT_UNION,PFT_NONZERO,PFT_NONZERO,ZFT_MIN);
-diag("out:\n".join("\nout:\n",map pfmt($_), @$result)."\n");
+#diag("out:\n".join("\nout:\n",map pfmt($_), @$result)."\n");
 is_deeply($result->[0], $expect_min, 'zfill set intersections to min z');
 
 $result = $clipper->execute(CT_UNION,PFT_NONZERO,PFT_NONZERO,ZFT_MAX);
-diag("out:\n".join("\nout:\n",map pfmt($_), @$result)."\n");
+#diag("out:\n".join("\nout:\n",map pfmt($_), @$result)."\n");
 is_deeply($result->[0], $expect_max, 'zfill set intersections to max z');
 
 $result = $clipper->execute(CT_UNION,PFT_NONZERO,PFT_NONZERO,ZFT_MEAN);
-diag("out:\n".join("\nout:\n",map pfmt($_), @$result)."\n");
+#diag("out:\n".join("\nout:\n",map pfmt($_), @$result)."\n");
 is_deeply($result->[0], $expect_mean, 'zfill set intersections to mean z');
 
 $result = $clipper->execute(CT_UNION,PFT_NONZERO,PFT_NONZERO,ZFT_BOTH_UINT32);
-diag("out:\n".join("\nout:\n",map pfmt($_), @$result)."\n");
+#diag("out:\n".join("\nout:\n",map pfmt($_), @$result)."\n");
 is_deeply($result->[0], $expect_both_uint32, 'zfill set intersections to mean z');
 
 
